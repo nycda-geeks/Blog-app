@@ -5,6 +5,18 @@ html
 		purba di hinka e nomber den un zin ku ta bisa eseki ta nan profile
 		h2= user.name
 		h3= user.email
+		p Here you can post a message to the messageboard!!
+		form(action='/profile' method='post')
+				label title
+				input#title(name='title' required)
+				label body
+				input#body(name='body' required)
+				input(type='submit' value='post' id='submit')
+
+		p Click on the following link to see all the posts you have made
+		br
+		a(href'/myposts')
+
 
 		a(href='/') home
 		br

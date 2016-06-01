@@ -85,6 +85,9 @@ app.get('/posts', function (request, response) {
 				body: columns.body
 			}
 		});
+		response.render('posts', {
+			posts: posts
+		});
 	});
 });
 app.get('/register', function (req, res){
@@ -92,7 +95,7 @@ app.get('/register', function (req, res){
 });
 
 app.post('/register', function (req, res) {
-	sequelize.sync({force: true}).then(function() {
+	sequelize.sync().then(function() {
 		User.create({
 			name: req.body.name,
 			email: req.body.email,
@@ -100,6 +103,16 @@ app.post('/register', function (req, res) {
 		});
 	});
 	res.redirect('/')
+});
+
+app.post('/profile', function (req, res) {
+	sequelize.sync().then(function() {
+		Post.create({
+			title: req.body.title,
+			body: req.body.body	
+		});
+		res.redirect('/posts')
+	});
 });
 
 
