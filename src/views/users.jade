@@ -1,0 +1,9 @@
+doctype html
+html
+	head
+	body
+		a(href='/') home
+		h2 List with all users
+		each user in users
+			li name: #{user.name}, email: #{user.email},
+				

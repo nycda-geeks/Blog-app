@@ -1,0 +1,8 @@
+doctype html
+html
+	head
+	body
+		a(href='/') home
+		h2 All post made can be seen on this page
+		each post in posts
+			li title: #{post.title}, email: #{post.body},
