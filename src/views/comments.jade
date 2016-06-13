@@ -1,0 +1,14 @@
+doctype html
+html
+	head
+		link(rel="stylesheet" type="text/css" href="stylesheet/styles.css")
+	body
+		a(href='/') Home
+		br
+		a(href='/profile') Profile
+		br
+		a(href='/logout') Log Out
+		br
+		h1 All comments
+		each lol in finding
+			li Comment: #{lol.comments}

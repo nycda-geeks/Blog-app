@@ -1,0 +1,8 @@
+		//h1 Comments
+			//form(action='/posts/addcomment' method='post')
+				//textarea(name= 'comment', cols=63, rows=10, id='comment', placeholder="Drop a line")
+				//input(type='submit' value='Post')
+		
+		//h1 All comments
+		//each lol in finding
+			//li Comment: #{lol.comments}

@@ -1,0 +1,33 @@
+doctype html
+html
+	head
+		//- script(src='script.js')
+		//- script(src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js")
+	body
+		a(href='/') Home
+		br
+		a(href='/profile') Profile
+		br
+		a(href='/posts') All posts
+		br
+		a(href='/logout') Log Out
+		br
+		h1 This is a single post
+
+
+		p Title: #{posts.title}
+		p by: #{posts.author}
+		p #{posts.body}
+
+		h1 Comments
+			form(action='/posts/addcomment' method='post')
+				textarea(name= 'comment', cols=63, rows=10, id='comment', placeholder="Drop a line")
+				input(type='submit' value='Post')
+		
+		h1 All comments
+		ul
+		each lol in finding
+			li by: #{lol.author}
+			li Comment: #{lol.message}
+
+

@@ -17,11 +17,23 @@ var User = sequelize.define('user', {
 
 var Post = sequelize.define('post', {
 	title: Sequelize.STRING,
-	body: Sequelize.TEXT
+	body: Sequelize.TEXT,
+	userID: Sequelize.INTEGER,
+	author: Sequelize.TEXT
+});
+
+var Comments = sequelize.define('comments', {
+	message: Sequelize.TEXT,
+	messageId: Sequelize.INTEGER,
+	author: Sequelize.TEXT
 });
 
 User.hasMany(Post);
 Post.belongsTo(User);
+Post.hasMany(Comments);
+Comments.belongsTo(User);
+Comments.belongsTo(Post);
+User.hasMany(Comments);
 
 
 var app = express();
@@ -90,29 +102,51 @@ app.get('/posts', function (request, response) {
 		});
 	});
 });
+
+app.get('/myposts', function (req, res) {
+	User.findOne({
+		where: {
+			id: req.session.user.id
+		}
+	}).then(function(theuser){
+		theuser.getPosts().then(function(theposts){
+			console.log(theposts)
+			console.log("e no ta wordu husa")
+			res.render('myposts', {
+				posts: theposts
+			});
+		});
+	});
+});
+
+
 app.get('/register', function (req, res){
 	res.render('register')
 });
 
 app.post('/register', function (req, res) {
-	sequelize.sync().then(function() {
-		User.create({
-			name: req.body.name,
-			email: req.body.email,
-			password: req.body.password
-		});
+	User.create({
+		name: req.body.name,
+		email: req.body.email,
+		password: req.body.password
 	});
 	res.redirect('/')
 });
 
+
 app.post('/profile', function (req, res) {
-	sequelize.sync().then(function() {
-		Post.create({
+	User.findOne({
+		where: {
+			id: req.session.user.id
+		}
+	}).then(function(theuser){
+		theuser.createPost({
 			title: req.body.title,
-			body: req.body.body	
+			body: req.body.body,
+			author: req.session.user.name	
 		});
-		res.redirect('/posts')
 	});
+	res.redirect('/posts')
 });
 
 
@@ -153,6 +187,92 @@ app.get('/logout', function (request, response) {
 		response.redirect('./?message=' + encodeURIComponent("You have Successfully been logged out."));
 	})
 });
+
+app.get('/posts/single', function(request, response) {
+	response.render('single');
+});
+
+
+
+app.get('/posts/single/:id', function(request, response) {
+	var user = request.session.user;
+	messageID = request.params.id;
+	if (user === undefined) {
+		response.redirect('/?message=' + encodeURIComponent("Please log in to view your posts."));
+	} else {
+		console.log(request.params.id);
+		Post.findById(request.params.id).then(function(apple) { // this specifies the columns in my messages table
+			console.log("Finding all messages at /post");
+			// console.log(apple);
+
+			var single = {
+				id: apple.dataValues.id,
+				title: apple.dataValues.title,
+				body: apple.dataValues.body,
+				author: apple.dataValues.author
+			}
+			console.log("being used");
+
+			console.log(single);
+
+
+
+			Comments.findAll({
+				where: {
+					messageId: request.params.id
+				}
+			}).then(function(apple) { // this specifies the columns in my messages table
+				console.log("Finding all comments at /comments");
+				// console.log(apple);
+
+				var finding = apple.map(function(comment) {
+					return {
+						author: request.session.user.name,
+						message: comment.dataValues.message
+					};
+				});
+
+
+			// 	console.log("printing results:");
+				console.log(user);
+
+				response.render('single', {
+					 finding: finding,
+					posts: single
+				});
+			});
+		})
+	}
+});
+
+app.post('/posts/addcomment', function (request, response) {
+// console.log(request.params.id);
+	console.log("tesytest");
+	var user = request.session.user;
+	if (user === undefined) {
+		response.redirect('/?message=' + encodeURIComponent("Please log in to view your posts."));
+	} else {
+				// console.log(user);
+			var email = user.email;
+			var comment = request.body.comment;
+			//var messageId= request.params.id;
+			console.log(request.session.user.name);
+
+			Comments.create({
+ 
+				message: comment,
+				author: request.session.user.name,
+				messageId: messageID
+
+			});
+
+			console.log("post request received");
+			console.log(request.body);
+			// response.send("i hear u");
+		response.redirect('back'); // back says: stay on this page
+		}
+	});
+
 
 
 sequelize.sync({force: true}).then(function () {

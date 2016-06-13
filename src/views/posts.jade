@@ -3,8 +3,15 @@ html
 	head
 	body
 		a(href='/') home
+		br
+		a(href='/profile') profile page
 		h2 All post made can be seen on this page
 		each post in posts
-			li title: #{post.title},
+			li
+				a(href='/posts/single/#{post.id}') title: #{post.title}
+			li post number: #{post.author},
 			br
-			li email: #{post.body},
+			li body: #{post.body},
+			br
+		div#empty
+

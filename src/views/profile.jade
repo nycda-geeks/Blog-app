@@ -9,15 +9,16 @@ html
 		form(action='/profile' method='post')
 				label title
 				input#title(name='title' required)
-				label body
+				label message
 				input#body(name='body' required)
 				input(type='submit' value='post' id='submit')
 
 		p Click on the following link to see all the posts you have made
 		br
-		a(href'/myposts')
-
-
+		a(href='/myposts') See all your posts
+		br
 		a(href='/') home
 		br
 		a(href='/logout') log out
+		br
+		a(href='/posts') view all posts made
